@@ -18,9 +18,8 @@ import java.security.SecureRandom;
  * @author Planidin Roman
  * @version v1.0
  */
-
 @Service
-public class AuthenticatitionServiceImpl implements AuthenticationService{
+public class AuthenticatitionServiceImpl implements AuthenticationService {
 
     private PasswordEncoder passwordEncoder;
     private TokenDao tokenDao;
@@ -34,23 +33,36 @@ public class AuthenticatitionServiceImpl implements AuthenticationService{
     }
 
     @Override
-    public Responser getAuthenticatedOrNot(LoginForm loginForm) {
+    public Responser getAuthentication(LoginForm loginForm) {
         User user = userDao.getUserByLogin(loginForm.getLogin());
+        Responser responser = new Responser();
+        if (user == null){
+            responser.setMessage("Ошибка авторизации: пользователь не найден");
+            return responser;}
+        else if (!passwordEncoder.matches(loginForm.getPassword(), user.getHashPassword())){
+            responser.setMessage("Ошибка авторизации: данные пользователя введены неверно");
+            return responser;
+        }
+        Token tokenInBase = tokenDao.getTokenByUserLogin(user.getLogin());
+        Token newToken = new Token(createToken(), user.getLogin());
+        if(tokenInBase == null){
+            tokenDao.saveToken(newToken);
+        }
+        else {
+            tokenDao.updateToken(newToken);
+        }
+        UserDto userDto = new UserDto(user.getLogin(), user.getName(), user.getRole(), user.getState(), newToken.getValue());
+        responser.setResult(userDto);
+        responser.setMessage("200");
+        return responser;
+    }
+
+    private String createToken() {
         SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
+        byte bytes[] = new byte[32];
         random.nextBytes(bytes);
         String tokenRandom = bytes.toString();
-        if(user != null )
-            if(passwordEncoder.matches(loginForm.getPassword(), user.getHashPassword())) {
-                Token token =  new Token(tokenRandom, user.getId());
-                token.setUser(user);
-                tokenDao.saveToken(token);
-                UserDto userDto = new UserDto(user.getLogin(), user.getName(), user.getRole(), user.getState(), token.getValue());
-                Responser responser = new Responser();
-                responser.setResult(userDto);
-                responser.setMessage("200");
-                return responser;
-            }
-        throw new IllegalArgumentException("Пользователя нет в базе");
+        return tokenRandom;
+        //TODO: учесть уникальность токена
     }
 }

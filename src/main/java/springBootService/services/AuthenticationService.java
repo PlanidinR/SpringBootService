@@ -9,5 +9,5 @@ import springBootService.models.Responser;
  */
 
 public interface AuthenticationService{
-    Responser getAuthenticatedOrNot(LoginForm loginForm);
+    Responser getAuthentication (LoginForm loginForm);
 }

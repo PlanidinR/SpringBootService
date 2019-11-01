@@ -11,11 +11,11 @@ import java.util.Collection;
  */
 
 public class TokenAuthentication implements Authentication {
-    private String userName;
+    private String token;
     private boolean isAuthenticated;
     private UserDetails userDetails;
-    public TokenAuthentication(String userName) {
-        this.userName = userName;
+    public TokenAuthentication(String token) {
+        this.token = token;
     }
     public void setUserDetails(UserDetails userDetails) {
         this.userDetails = userDetails;
@@ -46,6 +46,6 @@ public class TokenAuthentication implements Authentication {
     }
     @Override
     public String getName() {
-        return userName;
+        return token;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import springBootService.mappings.Mappings;
 import springBootService.models.Department;
+import springBootService.models.User;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -26,6 +27,7 @@ public class DepartmentDaoImpl implements DepartmentDao{
     public DepartmentDaoImpl(DataSource dataSource) {
         this.template = new JdbcTemplate(dataSource);
     }
+
     @Override
     public Department getByCode(String code) {
         try {

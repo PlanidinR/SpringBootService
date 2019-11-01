@@ -26,11 +26,15 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/login1")
+    @PostMapping("/loginPage")
     public Responser loginPage (HttpServletResponse httpServletResponse, @RequestBody LoginForm loginForm) throws IOException {
-        Responser responser = authenticationService.getAuthenticatedOrNot(loginForm);
+        Responser responser = authenticationService.getAuthentication(loginForm);
+        if(responser.getResult() == null){
+            return responser;
+        }
         UserDto userDto =  (UserDto) responser.getResult();
         httpServletResponse.addHeader("x-auth-token", userDto.getToken());
+        httpServletResponse.setHeader("x-auth-token", userDto.getToken());
         return responser;
     }
 }

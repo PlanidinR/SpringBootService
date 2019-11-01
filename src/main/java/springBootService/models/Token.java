@@ -10,12 +10,12 @@ import java.util.Objects;
 public class Token {
     private Integer id;
     private String value;
-    private Integer user_id;
+    private String user_login;
     private User user;
     public Token (){}
-    public Token( String value, Integer user_id) {
+    public Token( String value, String user_login) {
         this.value = value;
-        this.user_id = user_id;
+        this.user_login = user_login;
     }
     public Integer getId() {
         return id;
@@ -32,11 +32,11 @@ public class Token {
     public void setUser(User user) {
         this.user = user;
     }
-    public Integer getUser_id() {
-        return user_id;
+    public String getUser_login() {
+        return user_login;
     }
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setUser_login(String user_login) {
+        this.user_login= user_login;
     }
     @Override
     public boolean equals(Object o) {
@@ -45,19 +45,19 @@ public class Token {
         Token token = (Token) o;
         return Objects.equals(getId(), token.getId()) &&
                 Objects.equals(getValue(), token.getValue()) &&
-                Objects.equals(getUser_id(), token.getUser_id()) &&
+                Objects.equals(getUser_login(), token.getUser_login()) &&
                 Objects.equals(user, token.user);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getValue(), getUser_id(), user);
+        return Objects.hash(getId(), getValue(), getUser_login(), user);
     }
     @Override
     public String toString() {
         return "Token{" +
                 "id=" + id +
                 ", value='" + value + '\'' +
-                ", user_id=" + user_id +
+                ", user_id=" + user_login +
                 ", user=" + user +
                 '}';
     }

@@ -21,27 +21,32 @@ import springBootService.security.token.TokenAuthentication;
 
 @Component
 public class TokenAuthenticationProvider implements AuthenticationProvider {
+
     private TokenDao tokenDao;
     private UserDetailsService userDetailsService;
     private UserDao userDao;
+
     @Autowired
     public TokenAuthenticationProvider(TokenDao tokenDao, @Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, UserDao userDao) {
         this.tokenDao = tokenDao;
         this.userDetailsService = userDetailsService;
         this.userDao = userDao;
     }
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
         TokenAuthentication tokenAuthentication = (TokenAuthentication)authentication;
-        Token tokenCandidate = tokenDao.getByValue(tokenAuthentication.getName());
-        User user = userDao.getUserByUserIdFromToken(tokenCandidate.getUser_id());
+        String token =  tokenAuthentication.getName();
+        Token tokenCandidate = tokenDao.getTokenByValue(token);
         if (tokenCandidate != null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getLogin());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(tokenCandidate.getUser_login());
             tokenAuthentication.setUserDetails(userDetails);
             tokenAuthentication.setAuthenticated(true);
             return tokenAuthentication;
         } else throw new IllegalArgumentException("Bad token");
     }
+
     @Override
     public boolean supports(Class<?> authentication) {
         return TokenAuthentication.class.equals(authentication);
